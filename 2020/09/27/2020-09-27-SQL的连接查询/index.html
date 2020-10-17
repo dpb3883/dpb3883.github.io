@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SQL的连接查询 - 我的博客</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  
+  <meta name="description" content="前言前一段时间工作一直是和SQL打交道, 遇到一个sq..."> 
+  
+  <meta name="author" content="John Doe"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_h1619vhl1nr.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        loadingImage: '',
+      },
+      donate: {
+        enable: false,
+        alipay: '/images/theme/alipay.jpg',
+        wechat: '/images/theme/wechat.jpg'
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        alwaysShow: false
+      },
+      carrier: {
+        enable: true
+      },
+      daovoice: {
+        enable: true
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+<nav class="navbar">
+  <div class="left"></div>
+  <div class="center">SQL的连接查询</div>
+  <div class="right">
+    <i class="iconfont iconmenu j-navbar-menu"></i>
+  </div>
+</nav>
+
+  <nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content">
+      
+      
+      
+      
+      <li class="menu-item"><a href="/ " class="underline"> 首页</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/galleries " class="underline"> 摄影</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/archives " class="underline"> 归档</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/tags " class="underline"> 标签</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/categories " class="underline"> 分类</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/about " class="underline"> 关于</a></li>
+      
+    </ul>
+    <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/izhaoo/hexo-theme-zhaoo">zhaoo</a></p></div>
+  </div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/post-image.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">SQL的连接查询</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>September 27, 2020</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>1964</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前一段时间工作一直是和SQL打交道, 遇到一个sql连接查询问题, 自己疫情在家躺尸，早就把这方面的知识还给学校了，这里就把查到的一些资料以及把自己遇到的问题和解决方法记录一下。</p>
+<h2 id="Join"><a href="#Join" class="headerlink" title="Join"></a>Join</h2><p>我们知道,<code>SQL</code>的<code>Join</code>语法有很多<code>inner</code>的,有<code>outer</code>的，有<code>left</code>的，有时候，对于select出来的结果集是什么样子有点不是很清楚。通过韦恩图(Venn diagram, 可用来表示多个集合之间的逻辑关系)，可以帮我们有效的理解这些。</p>
+<p>假设我们有两张表。Table A 是左边的表。Table B 是右边的表。其各有四条记录，其中有两条记录name是相同的，如下所示：让我们看看不同JOIN的不同</p>
+<table>
+<thead>
+<tr>
+<th>A表</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>name</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Monkey</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ninja</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Spaghetti</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>B表</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>name</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Rutabaga</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Darth Vade</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ninja</td>
+</tr>
+</tbody></table>
+<h3 id="INNER-JOIN"><a href="#INNER-JOIN" class="headerlink" title="INNER JOIN"></a>INNER JOIN</h3><p>INNER JOIN 产生的结果集中，是表A和表B的交集。</p>
+<p><img   class="lazyload" data-original="https://s1.ax1x.com/2020/09/27/0kRkbq.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  alt="0kRkbq.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> TableA <span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> TableB <span class="hljs-keyword">ON</span> TableA.name = TableB.name<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>结果集</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(TableA.)</td>
+<td></td>
+<td>(TableB.)</td>
+<td></td>
+</tr>
+<tr>
+<td>id</td>
+<td>name</td>
+<td>id</td>
+<td>name</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Pirate</td>
+<td>2</td>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ninja</td>
+<td>4</td>
+<td>Ninja</td>
+</tr>
+</tbody></table>
+<h3 id="FULL-OUTER-JOIN"><a href="#FULL-OUTER-JOIN" class="headerlink" title="FULL [OUTER] JOIN"></a>FULL [OUTER] JOIN</h3><p>FULL OUTER JOIN 产生表A和表B的并集。对于没有匹配的记录，则会以<code>Null</code>做为值。</p>
+<p><img   class="lazyload" data-original="https://s1.ax1x.com/2020/09/27/0kRod0.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  alt="0kRod0.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> TableA <span class="hljs-keyword">FULL</span> <span class="hljs-keyword">OUTER</span> <span class="hljs-keyword">JOIN</span> TableB <span class="hljs-keyword">ON</span> TableA.name = TableB.name<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>结果集</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(TableA.)</td>
+<td></td>
+<td>(TableB.)</td>
+<td></td>
+</tr>
+<tr>
+<td>id</td>
+<td>name</td>
+<td>id</td>
+<td>name</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Pirate</td>
+<td>2</td>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Monkey</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ninja</td>
+<td>4</td>
+<td>Ninja</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Spaghetti</td>
+<td>Null</td>
+<td>Null</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>Null</td>
+<td>1</td>
+<td>Rutabaga</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>Null</td>
+<td>3</td>
+<td>Darth Vade</td>
+</tr>
+</tbody></table>
+<h3 id="LEFT-OUTER-JOIN"><a href="#LEFT-OUTER-JOIN" class="headerlink" title="LEFT [OUTER] JOIN"></a>LEFT [OUTER] JOIN</h3><p>LEFT OUTER JOIN 产生表A的完全集，B表中没有匹配的则以null值取代。</p>
+<p><img   class="lazyload" data-original="https://s1.ax1x.com/2020/09/27/0kbWqS.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  alt="0kbWqS.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> TableA <span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">OUTER</span> <span class="hljs-keyword">JOIN</span> TableB <span class="hljs-keyword">ON</span> TableA.name = TableB.name<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>结果集</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(TableA.)</td>
+<td></td>
+<td>(TableB.)</td>
+<td></td>
+</tr>
+<tr>
+<td>id</td>
+<td>name</td>
+<td>id</td>
+<td>name</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Pirate</td>
+<td>2</td>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Monkey</td>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ninja</td>
+<td>4</td>
+<td>Ninja</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Spaghetti</td>
+<td>Null</td>
+<td>Null</td>
+</tr>
+</tbody></table>
+<h3 id="RIGHT-OUTER-JOIN"><a href="#RIGHT-OUTER-JOIN" class="headerlink" title="RIGHT [OUTER] JOIN"></a>RIGHT [OUTER] JOIN</h3><p>RIGHT OUTER JOIN 是后面的表为基础，与LEFT OUTER JOIN用法类似。产生表B的完全集，A表中没有匹配的则以null值取代。</p>
+<h3 id="UNION-与-UNION-ALL"><a href="#UNION-与-UNION-ALL" class="headerlink" title="UNION 与 UNION ALL"></a>UNION 与 UNION ALL</h3><p>UNION 操作符用于合并两个或多个 SELECT 语句的结果集。</p>
+<p>UNION 内部的 SELECT 语句必须拥有相同数量的列。列也必须拥有相似的数据类型。每条 SELECT 语句中的列的顺序必须相同。</p>
+<p>UNION ALL是直接连接，取到得是所有值，记录可能有重复 UNION 是取唯一值，记录没有重复</p>
+<p>UNION将会按照字段的顺序进行排序; UNION ALL只是简单的将两个结果合并后就返回。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">FROM</span> TableA <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">FROM</span> TableB<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>结果集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+</tr>
+<tr>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>Monkey</td>
+</tr>
+<tr>
+<td>Ninja</td>
+</tr>
+<tr>
+<td>Spaghetti</td>
+</tr>
+<tr>
+<td>Rutabaga</td>
+</tr>
+<tr>
+<td>Darth Vade</td>
+</tr>
+</tbody></table>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">FROM</span> TableA <span class="hljs-keyword">UNION</span> <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">FROM</span> TableB<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>结果集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+</tr>
+<tr>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>Monkey</td>
+</tr>
+<tr>
+<td>Ninja</td>
+</tr>
+<tr>
+<td>Spaghetti</td>
+</tr>
+<tr>
+<td>Rutabaga</td>
+</tr>
+<tr>
+<td>Pirate</td>
+</tr>
+<tr>
+<td>Darth Vade</td>
+</tr>
+<tr>
+<td>Ninja</td>
+</tr>
+</tbody></table>
+<h2 id="使用Join遇到的问题及解决方法"><a href="#使用Join遇到的问题及解决方法" class="headerlink" title="使用Join遇到的问题及解决方法"></a>使用Join遇到的问题及解决方法</h2><h2 id="参考博文"><a href="#参考博文" class="headerlink" title="参考博文"></a>参考博文</h2><p><a target="_blank" rel="noopener" href="https://justcode.ikeepstudying.com/2016/08/mysql-%E5%9B%BE%E8%A7%A3-inner-join%E3%80%81left-join%E3%80%81right-join%E3%80%81full-outer-join%E3%80%81union%E3%80%81union-all%E7%9A%84%E5%8C%BA%E5%88%AB/">Mysql: 图解 inner join、left join、right join、full outer join、union、union all的区别</a> 本文使用到的图片、Sql、以及一些内容都出自这里</p>
+
+      </section>
+      <section class="extra">
+        
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/" rel="tag">SQL</a></li></ul>
+
+        
+<nav class="nav">
+  
+    <a href="/2020/10/13/hello-world/"><i class="iconfont iconleft"></i>Hello World</a>
+  
+  
+    <a href="/2019/09/09/%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/">第二篇博客<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+      </section>
+      
+      <section class="comments">
+  
+  <div class="btn" id="comments-btn">查看评论</div>
+  
+  
+</section>
+      
+    </section>
+  </div>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  
+  <p align="center">Copyright© 2019-2020 | <img   class="lazyload" data-original="http://qickcbdl3.bkt.clouddn.com/888.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ><a href="http://www.beian.miit.gov.cn/"  style="color:#f72b07" target="_blank">冀ICP备-190262999</a> </p>
+ 
+
+  
+    
+
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  <div class="fab fab-daovoice">
+    <i class="iconfont iconcomment"></i>
+  </div>
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/modules.js"></script>
+<script src="/js/zui.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i["DaoVoiceObject"] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    a.charset = "utf-8";
+    m.parentNode.insertBefore(a, m)
+  })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+    "//widget.daovoice.io/widget/0f81ff2f.js", "daovoice")
+  daovoice('init', {
+    app_id: "abcdefg"
+  }, {
+    launcher: {
+      disableLauncherIcon: true,
+    },
+  });
+  daovoice('update');
+</script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+<script>
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?4c204d8bc027a0455b5fc642ac334ca8";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+</html>
